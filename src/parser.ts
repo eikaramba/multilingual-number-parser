@@ -6,12 +6,13 @@ import {
   JOINERS,
   MAGNITUDE_KEYS,
   NUMBER_WORDS,
+  HUNDRED_KEYS,
   PUNCTUATION,
   TEN_KEYS,
   TOKEN_TYPE,
   UNIT_KEYS,
 } from './constants';
-import { modifyDutch, modifyEnglish, modifyGerman } from './modifiers';
+import { modifyDutch, modifyEnglish, modifyGerman, modifyPortuguese } from './modifiers';
 import { HANDLE_TOKEN, Languages, Region, SubRegion, Token } from './types';
 
 /**
@@ -254,6 +255,7 @@ const getTokenType = (chunk: string): TOKEN_TYPE => {
   if (TEN_KEYS.includes(chunk.toLowerCase())) return TOKEN_TYPE.TEN;
   if (MAGNITUDE_KEYS.includes(chunk.toLowerCase())) return TOKEN_TYPE.MAGNITUDE;
   if (DECIMALS.includes(chunk.toLowerCase())) return TOKEN_TYPE.DECIMAL;
+  if (HUNDRED_KEYS.includes(chunk.toLowerCase())) return TOKEN_TYPE.HUNDRED;
 };
 
 /**
@@ -279,6 +281,10 @@ export const parser = (text: string, language: Languages): Region[] => {
         break;
       case Languages['en-us']:
         splitted = modifyEnglish(currentValue);
+        break;
+      case Languages['pt-br']:
+        currentValue = currentValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        splitted = modifyPortuguese(currentValue);
         break;
     }
 

@@ -145,5 +145,11 @@ describe('Convert words to numbers', () => {
     const words = 'fünf Komma fünf zwei eins';
     const result = wordsToNumbers(words, { language: Languages['de-de'] });
     expect(result).toEqual(5.521);
-});
+  });
+
+  it('fünf Komma zweihundertdreiundzwanzig', () => {
+    const words = 'fünf Komma zweihundertdreiundzwanzig';
+    const result = wordsToNumbers(words, { language: Languages['de-de'] });
+    expect(result).toEqual(5.223);
+  });
 });

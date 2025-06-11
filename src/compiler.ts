@@ -1,6 +1,7 @@
 import { NUMBER, TOKEN_TYPE } from './constants';
 import { Languages, Region, SubRegion } from './types';
 import { splice } from './util';
+import { handleDecimalParts } from './modifiers';
 
 export type Options = Partial<{
   numbersOnly: boolean;
@@ -85,22 +86,31 @@ export const compileSubRegion = (subRegion: SubRegion, decimal: boolean = false)
  * @param {Region} region
  * @returns {number} the value of the region
  */
-export const compileRegion = (region: Region): number => {
+export const compileRegion = (region: Region, language: Languages = Languages['en-us']): number => {
   let before: number = 0;
   let after: string = '';
   let isDecimal: boolean = false;
+  let decimalParts: number[] = [];
+  
   for (const subRegion of region.subRegions) {
     const { sum, decimal } = compileSubRegion(subRegion, isDecimal);
     isDecimal = decimal;
     if (decimal) {
       if (subRegion.type !== TOKEN_TYPE.DECIMAL) {
-        after += sum;
+        decimalParts.push(sum);
       }
     } else {
       before += sum;
     }
   }
-  return parseFloat(`${before}.${after}`);
+  
+  if (decimalParts.length > 0) {
+    // Use language-specific decimal handling
+    after = handleDecimalParts(decimalParts, language);
+  }
+  
+  const result = parseFloat(`${before}.${after}`);
+  return result;
 };
 
 /**
@@ -109,12 +119,12 @@ export const compileRegion = (region: Region): number => {
  * @param {string} text original text
  * @returns {string}
  */
-const replaceRegionsInText = (regions: Region[], text: string): string => {
+const replaceRegionsInText = (regions: Region[], text: string, language: Languages): string => {
   let replaced = text;
   let offset = 0;
   regions.forEach(region => {
     const length = region.end - region.start + 1;
-    const replaceWith = `${compileRegion(region)}`;
+    const replaceWith = `${compileRegion(region, language)}`;
     replaced = splice(replaced, region.start + offset, length, replaceWith);
     offset -= length - replaceWith.length;
   });
@@ -141,18 +151,20 @@ export const compiler = (
   options: Options
 ): string | number | number[] => {
   if (!regions) return text;
+  const language = options.language || Languages['en-us'];
+  
   if (options.numbersOnly) {
-    return regions.map(region => compileRegion(region));
+    return regions.map(region => compileRegion(region, language));
   }
   if (options.oneNumber) {
     let temp = '';
     regions.forEach(region => {
-      temp += compileRegion(region);
+      temp += compileRegion(region, language);
     });
     return parseFloat(temp);
   }
   if (regions.length && regions[0].end - regions[0].start === text.length - 1) {
-      return compileRegion(regions[0]);
+      return compileRegion(regions[0], language);
     }
-  return replaceRegionsInText(regions, text);
+  return replaceRegionsInText(regions, text, language);
 };

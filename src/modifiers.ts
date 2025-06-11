@@ -15,6 +15,7 @@ import {
   TOKEN_TYPE,
 } from './constants';
 import { getAllIndexes } from './util';
+import { Languages } from './types';
 
 type Possibility = {
   start: number;
@@ -667,3 +668,29 @@ export const modifyEnglish = (chunk: string): string | string[] => {
 //     }
 //     return uncompatible;
 //   };
+
+/**
+ * Handles decimal parts based on language-specific rules
+ * @param decimalParts Array of decimal part numbers
+ * @param language The language being processed
+ * @returns The decimal part as a string
+ */
+export const handleDecimalParts = (decimalParts: number[], language: Languages): string => {
+  if (decimalParts.length === 0) return '';
+  
+  switch (language) {
+    case Languages['pt-br']:
+      // Portuguese: Add decimal parts mathematically
+      // "quinhentos e vinte e um" = 500 + 21 = 521
+      const totalDecimal = decimalParts.reduce((acc, part) => acc + part, 0);
+      return totalDecimal.toString();
+      
+    case Languages['de-de']:
+    case Languages['en-us']:
+    case Languages['nl-nl']:
+    default:
+      // German/English/Dutch: Concatenate individual digits
+      // "fünf zwei eins" = "5" + "2" + "1" = "521"
+      return decimalParts.join('');
+  }
+};

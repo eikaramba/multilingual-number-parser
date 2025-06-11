@@ -42,22 +42,35 @@ export const compileSubRegion = (subRegion: SubRegion, decimal: boolean = false)
     case TOKEN_TYPE.HUNDRED:
       if (subRegion.tokens.length > 1 || subRegion.tokens.length === 0)
         throw 'SHOULD HAVE 1 TOKEN! SUBREGION TYPE = HUNDRED';
-      sum += convertChunkToNumber(subRegion.tokens[0].lowerCaseValue);
+      const value = convertChunkToNumber(subRegion.tokens[0].lowerCaseValue);
+      if (decimal) {
+        sum += Math.round(value / 100);
+      } else {
+        sum += value;
+      }
       break;
     case TOKEN_TYPE.MAGNITUDE:
-      subRegion.tokens.map(token => {
-        switch (token.type) {
-          case TOKEN_TYPE.UNIT:
-          case TOKEN_TYPE.TEN:
-          case TOKEN_TYPE.HUNDRED:
+      if (decimal) {
+        subRegion.tokens.map(token => {
+          if (token.type !== TOKEN_TYPE.MAGNITUDE) {
             sum += convertChunkToNumber(token.lowerCaseValue);
-            break;
-          case TOKEN_TYPE.MAGNITUDE:
-            if (sum === 0) sum = 1;
-            sum *= convertChunkToNumber(token.lowerCaseValue);
-            break;
-        }
-      });
+          }
+        });
+      } else {
+        subRegion.tokens.map(token => {
+          switch (token.type) {
+            case TOKEN_TYPE.UNIT:
+            case TOKEN_TYPE.TEN:
+            case TOKEN_TYPE.HUNDRED:
+              sum += convertChunkToNumber(token.lowerCaseValue);
+              break;
+            case TOKEN_TYPE.MAGNITUDE:
+              if (sum === 0) sum = 1;
+              sum *= convertChunkToNumber(token.lowerCaseValue);
+              break;
+          }
+        });
+      }
   }
   return { sum, decimal: decimal };
 };
@@ -74,13 +87,15 @@ export const compileSubRegion = (subRegion: SubRegion, decimal: boolean = false)
  */
 export const compileRegion = (region: Region): number => {
   let before: number = 0;
-  let after: number = 0;
+  let after: string = '';
   let isDecimal: boolean = false;
   for (const subRegion of region.subRegions) {
     const { sum, decimal } = compileSubRegion(subRegion, isDecimal);
     isDecimal = decimal;
     if (decimal) {
-      after += sum;
+      if (subRegion.type !== TOKEN_TYPE.DECIMAL) {
+        after += sum;
+      }
     } else {
       before += sum;
     }

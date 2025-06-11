@@ -40,7 +40,7 @@ const canAddTokenToEndOfSubRegion = (subRegion: SubRegion, currentToken: Token) 
     currentToken.type === TOKEN_TYPE.TEN
   )
     return true;
-  if (prevToken.type === TOKEN_TYPE.TEN && currentToken.type === TOKEN_TYPE.UNIT) return true;
+  if (prevToken.type === TOKEN_TYPE.UNIT && currentToken.type === TOKEN_TYPE.TEN) return true;
   if (prevToken.type === TOKEN_TYPE.MAGNITUDE && currentToken.type === TOKEN_TYPE.MAGNITUDE) return true;
   return false;
 };
@@ -54,6 +54,9 @@ const canAddTokenToEndOfSubRegion = (subRegion: SubRegion, currentToken: Token) 
 const getSubRegionType = (subRegion: SubRegion, currentToken: Token): { type: TOKEN_TYPE } => {
   if (currentToken.type === TOKEN_TYPE.DECIMAL) return { type: TOKEN_TYPE.DECIMAL };
   if (subRegion && subRegion.type === TOKEN_TYPE.MAGNITUDE) return { type: TOKEN_TYPE.MAGNITUDE };
+  if (subRegion && subRegion.tokens.length > 0) {
+    return { type: TOKEN_TYPE.MAGNITUDE };
+  }
   return { type: currentToken.type };
 };
 

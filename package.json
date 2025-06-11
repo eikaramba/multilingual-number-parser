@@ -17,7 +17,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "tsdx test",
+    "test": "vitest",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
@@ -49,15 +49,20 @@
     }
   ],
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^11.0.2",
-    "@types/chai": "^4.3.0",
-    "@types/jest": "^29.5.12",
-    "@types/mocha": "^10.0.6",
-    "husky": "^9.0.11",
-    "size-limit": "^11.0.2",
+    "@size-limit/preset-small-lib": "^11.2.0",
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "chai": "^5.2.0",
+    "husky": "^9.1.7",
+    "size-limit": "^11.2.0",
     "tsdx": "^0.14.1",
-    "tslib": "^2.3.1",
-    "typescript": "^5.3.3",
-    "chai": "^5.1.0"
+    "tslib": "^2.8.1",
+    "vitest": "^3.2.3",
+    "typescript": "^5.8.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

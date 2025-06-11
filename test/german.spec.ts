@@ -1,5 +1,7 @@
 import wordsToNumbers from '../src/index';
 import { Languages } from '../src/types';
+import { it, describe, expect } from 'vitest';
+
 
 describe('Convert words to numbers', () => {
   it('dreiunddreißig', () => {

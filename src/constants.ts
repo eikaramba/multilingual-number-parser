@@ -497,3 +497,4 @@ export const ALL_WORDS = [...NUMBER_WORDS, ...JOINERS, ...DECIMALS];
 export const BLACKLIST_SINGULAR_WORDS = ['a', 'een'];
 export const DUTCH_SPECIFIC_SPLIT = ['en', 'ën'];
 export const ENGLISH_SPECIFIC_SPLIT = ['-'];
+export const PORTUGUESE_SPECIFIC_SPLIT = ['e'];

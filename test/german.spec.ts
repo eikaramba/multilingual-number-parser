@@ -133,15 +133,15 @@ describe('Convert words to numbers', () => {
   });
 
   // wrong
-  // it('neunzehnhundertachtzigtausend', () => {
-  //     const words = 'neunzehnhundertachtzigtausend';
-  //     const result = wordsToNumbers(words, { language: Languages['de-de'] });
-  //     expect(result).toEqual('1980000');
-  // });
+  it('neunzehnhundertachtzigtausend', () => {
+      const words = 'neunzehnhundertachtzigtausend';
+      const result = wordsToNumbers(words, { language: Languages['de-de'] });
+      expect(result).toEqual(1980000);
+  });
   
-//   it('fünf Komma fünf zwei eins', () => {
-//     const words = 'fünf Komma fünf zwei eins';
-//     const result = wordsToNumbers(words, { language: Languages['de-de'] });
-//     expect(result).toEqual(5.521);
-// });
+  it('fünf Komma fünf zwei eins', () => {
+    const words = 'fünf Komma fünf zwei eins';
+    const result = wordsToNumbers(words, { language: Languages['de-de'] });
+    expect(result).toEqual(5.521);
+});
 });
